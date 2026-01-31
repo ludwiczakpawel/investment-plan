@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment Plan</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  #gate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  .lock-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 380px;
+    width: 100%;
+  }
+  .lock-box .emoji { font-size: 3rem; margin-bottom: 1rem; }
+  .lock-box h1 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .lock-box p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .lock-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 1rem;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+  .lock-box input:focus { border-color: var(--accent); }
+  .lock-box button {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .lock-box button:hover { opacity: 0.85; }
+  .error { color: #f85149; font-size: 0.85rem; margin-top: 0.75rem; display: none; }
+  #content { display: none; }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="lock-box">
+    <div class="emoji">🔒</div>
+    <h1>Investment Plan</h1>
+    <p>Enter password to view</p>
+    <input type="password" id="pw" placeholder="••••••" autofocus>
+    <button onclick="unlock()">Unlock</button>
+    <div class="error" id="err">Wrong password. Try again.</div>
+  </div>
+</div>
+
+<div id="content"></div>
+
+<script>
+// Simple hash-based gate. Not military-grade, but keeps random visitors out.
+const HASH = '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8';
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function unlock() {
+  const pw = document.getElementById('pw').value;
+  const hash = await sha256(pw);
+  if (hash === HASH) {
+    document.getElementById('gate').style.display = 'none';
+    const resp = await fetch('plan-content.html');
+    const html = await resp.text();
+    // Extract body content and styles
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const style = doc.querySelector('style');
+    const body = doc.body.innerHTML;
+    if (style) document.head.appendChild(style.cloneNode(true));
+    const content = document.getElementById('content');
+    content.innerHTML = body;
+    content.style.display = 'block';
+  } else {
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('pw').value = '';
+    document.getElementById('pw').focus();
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+</script>
+</body>
+</html>

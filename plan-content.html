@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investment Plan — Jan 31, 2026</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #d29922;
+    --purple: #bc8cff;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.4rem; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; color: var(--accent); }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; }
+  .disclaimer {
+    background: #1c1207;
+    border: 1px solid #5c3d0a;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+    font-size: 0.9rem;
+    color: var(--orange);
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    text-align: center;
+  }
+  .stat .value { font-size: 1.8rem; font-weight: 700; }
+  .stat .label { font-size: 0.8rem; color: var(--muted); margin-top: 0.25rem; }
+  .green { color: var(--green); }
+  .red { color: var(--red); }
+  .orange { color: var(--orange); }
+  .purple { color: var(--purple); }
+  .accent { color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  tr:hover td { background: rgba(88,166,255,0.04); }
+  .bar-container {
+    width: 100%;
+    height: 32px;
+    border-radius: 6px;
+    overflow: hidden;
+    display: flex;
+    margin: 1rem 0;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+  .bar-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: width 0.3s;
+  }
+  .pill {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+  .pill-green { background: rgba(63,185,80,0.15); color: var(--green); }
+  .pill-red { background: rgba(248,81,73,0.15); color: var(--red); }
+  .pill-blue { background: rgba(88,166,255,0.15); color: var(--accent); }
+  ul { padding-left: 1.5rem; margin: 0.5rem 0; }
+  li { margin: 0.4rem 0; }
+  .checklist { list-style: none; padding-left: 0; }
+  .checklist li { padding: 0.5rem 0; padding-left: 1.75rem; position: relative; }
+  .checklist li::before {
+    content: '☐';
+    position: absolute;
+    left: 0;
+    font-size: 1.1rem;
+  }
+  .section-icon { margin-right: 0.5rem; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 640px) {
+    body { padding: 1rem; }
+    .two-col { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    h1 { font-size: 1.5rem; }
+  }
+  .tag {
+    display: inline-block;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    background: rgba(88,166,255,0.1);
+    color: var(--accent);
+    margin-left: 0.3rem;
+  }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  .emoji-lg { font-size: 1.5rem; }
+  .note {
+    background: rgba(88,166,255,0.06);
+    border-left: 3px solid var(--accent);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+</style>
+</head>
+<body>
+
+<h1>🎯 Your Investment Plan</h1>
+<p class="subtitle">Generated January 31, 2026 — based on XTB account exports</p>
+
+<div class="disclaimer">
+  ⚠️ <strong>Disclaimer:</strong> I'm not a licensed financial advisor. This is analysis based on your data and current market research. Always double-check big moves with a professional if you're unsure.
+</div>
+
+<!-- ==================== CURRENT STATE ==================== -->
+
+<h2><span class="section-icon">📍</span>Where You Are Now</h2>
+
+<div class="stat-grid">
+  <div class="stat">
+    <div class="value accent">32,200</div>
+    <div class="label">Total Portfolio (PLN)</div>
+  </div>
+  <div class="stat">
+    <div class="value green">+1,171</div>
+    <div class="label">Total Profit (PLN)</div>
+  </div>
+  <div class="stat">
+    <div class="value green">+3.7%</div>
+    <div class="label">Return (6 months)</div>
+  </div>
+  <div class="stat">
+    <div class="value orange">~80%</div>
+    <div class="label">Tech Exposure</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Current Holdings</h3>
+  <table>
+    <thead>
+      <tr><th>ETF</th><th>What It Tracks</th><th>Value (PLN)</th><th>%</th><th>P/L</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>XAIX.DE</strong></td><td>AI & Big Data</td><td>11,838</td><td>36.8%</td><td><span class="green">+491</span></td></tr>
+      <tr><td><strong>CNDX.UK</strong></td><td>NASDAQ 100 (USD)</td><td>5,086</td><td>15.8%</td><td><span class="green">+241</span></td></tr>
+      <tr><td><strong>XLKS.UK</strong></td><td>S&P 500 Info Tech</td><td>3,427</td><td>10.7%</td><td><span class="red">-45</span></td></tr>
+      <tr><td><strong>QDVE.DE</strong></td><td>NASDAQ 100 (EUR)</td><td>3,296</td><td>10.2%</td><td><span class="green">+66</span></td></tr>
+      <tr><td><strong>SXRT.DE</strong></td><td>MSCI World</td><td>3,223</td><td>10.0%</td><td><span class="green">+236</span></td></tr>
+      <tr><td><strong>CSPX.UK</strong></td><td>S&P 500 (USD)</td><td>2,079</td><td>6.5%</td><td><span class="green">+79</span></td></tr>
+      <tr><td><strong>IWDA.UK</strong></td><td>MSCI World (USD)</td><td>1,702</td><td>5.3%</td><td><span class="green">+91</span></td></tr>
+      <tr><td><strong>SXR8.DE</strong></td><td>S&P 500 (EUR)</td><td>1,254</td><td>3.9%</td><td><span class="green">+11</span></td></tr>
+      <tr><td><strong>Cash</strong></td><td>—</td><td>51</td><td>0.2%</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <h3 style="margin-top:1.5rem">Current Allocation</h3>
+  <div class="bar-container">
+    <div class="bar-segment" style="width:36.8%;background:#f85149">AI 37%</div>
+    <div class="bar-segment" style="width:26%;background:#d29922">NASDAQ 26%</div>
+    <div class="bar-segment" style="width:10.7%;background:#da7756">IT 11%</div>
+    <div class="bar-segment" style="width:15.3%;background:#58a6ff">World 15%</div>
+    <div class="bar-segment" style="width:10.4%;background:#3fb950">S&P 10%</div>
+  </div>
+  <p style="color:var(--muted);font-size:0.85rem">⚠️ Almost everything is tech. If tech drops 20%, your whole portfolio drops ~16%.</p>
+</div>
+
+<!-- ==================== STEP 1 ==================== -->
+
+<h2><span class="section-icon">🔧</span>Step 1: Clean Up Duplicates (Free)</h2>
+
+<div class="card">
+  <p>You own the <strong>same index twice</strong> in different currency wrappers. Don't sell the old ones (triggers taxes), just stop buying them:</p>
+  <table>
+    <thead><tr><th>You Own Both</th><th>They're The Same</th><th>Keep Buying</th><th>Stop Buying</th></tr></thead>
+    <tbody>
+      <tr><td>CNDX.UK + QDVE.DE</td><td>NASDAQ 100</td><td><span class="green">QDVE.DE</span> <span class="tag">EUR</span></td><td><span class="red">CNDX.UK</span></td></tr>
+      <tr><td>IWDA.UK + SXRT.DE</td><td>MSCI World</td><td><span class="green">SXRT.DE</span> <span class="tag">EUR</span></td><td><span class="red">IWDA.UK</span></td></tr>
+      <tr><td>SXR8.DE + CSPX.UK</td><td>S&P 500</td><td><span class="green">SXR8.DE</span> <span class="tag">EUR</span></td><td><span class="red">CSPX.UK</span></td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <strong>Why EUR versions?</strong> You earn in PLN. EUR is closer to PLN than USD, so you avoid extra currency swings eating into your returns.
+  </div>
+</div>
+
+<!-- ==================== STEP 2 ==================== -->
+
+<h2><span class="section-icon">💰</span>Step 2: Invest the 20,000 PLN</h2>
+
+<div class="two-col">
+  <div class="card" style="border-color:var(--green)">
+    <h3 style="color:var(--green)">✅ Option A: Balanced Growth (Recommended)</h3>
+    <table>
+      <thead><tr><th>What</th><th>Amount</th><th>ETF</th></tr></thead>
+      <tbody>
+        <tr><td>🌍 MSCI World</td><td><strong>8,000</strong></td><td>SXRT.DE</td></tr>
+        <tr><td>🌏 Emerging Markets</td><td><strong>4,000</strong></td><td>EMIM.DE</td></tr>
+        <tr><td>🇪🇺 European Stocks</td><td><strong>3,000</strong></td><td>SX5S.DE</td></tr>
+        <tr><td>🥇 Gold</td><td><strong>2,000</strong></td><td>4GLD.DE</td></tr>
+        <tr><td>🛡️ Bonds</td><td><strong>3,000</strong></td><td>IBGS.DE</td></tr>
+      </tbody>
+    </table>
+    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.75rem">Reduces tech to ~45%. Adds safety net with gold & bonds. Captures growth in emerging and European markets.</p>
+  </div>
+
+  <div class="card">
+    <h3 style="color:var(--purple)">🚀 Option B: Still Aggressive</h3>
+    <table>
+      <thead><tr><th>What</th><th>Amount</th><th>ETF</th></tr></thead>
+      <tbody>
+        <tr><td>🌍 MSCI World</td><td><strong>10,000</strong></td><td>SXRT.DE</td></tr>
+        <tr><td>🌏 Emerging Markets</td><td><strong>5,000</strong></td><td>EMIM.DE</td></tr>
+        <tr><td>🇪🇺 European Stocks</td><td><strong>5,000</strong></td><td>SX5S.DE</td></tr>
+      </tbody>
+    </table>
+    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.75rem">Simpler. Still 100% stocks. No safety net but more diversified geography.</p>
+  </div>
+</div>
+
+<div class="card">
+  <h3>Portfolio After Option A (total ~52k PLN)</h3>
+  <div class="bar-container" style="height:40px;font-size:0.75rem">
+    <div class="bar-segment" style="width:23%;background:#f85149">AI 23%</div>
+    <div class="bar-segment" style="width:6%;background:#d29922">NAS</div>
+    <div class="bar-segment" style="width:7%;background:#da7756">IT</div>
+    <div class="bar-segment" style="width:25%;background:#58a6ff">World 25%</div>
+    <div class="bar-segment" style="width:10%;background:#3fb950">EM 10%</div>
+    <div class="bar-segment" style="width:8%;background:#1f6feb">EU 8%</div>
+    <div class="bar-segment" style="width:8%;background:#7c8089">S&P</div>
+    <div class="bar-segment" style="width:4%;background:#e3b341">Au</div>
+    <div class="bar-segment" style="width:6%;background:#6e7681">Bond</div>
+  </div>
+  <p style="font-size:0.85rem;color:var(--muted)">Tech: ~45% (down from 80%) · Bonds + Gold: ~10% safety net · Emerging + Europe: ~18% geographic diversity</p>
+</div>
+
+<!-- ==================== STEP 3 ==================== -->
+
+<h2><span class="section-icon">📊</span>Step 3: Monthly Investing Going Forward</h2>
+
+<div class="card">
+  <p>Pick a monthly amount (even 500–1,000 PLN) and split it:</p>
+  <table>
+    <thead><tr><th>Where</th><th>%</th><th>ETF</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>🌍 MSCI World</td><td><strong>40%</strong></td><td>SXRT.DE</td><td>Your backbone — broad, global, stable</td></tr>
+      <tr><td>🤖 AI & Big Data</td><td><strong>20%</strong></td><td>XAIX.DE</td><td>Your conviction bet — keep growing it</td></tr>
+      <tr><td>🌏 Emerging Markets</td><td><strong>15%</strong></td><td>EMIM.DE</td><td>Growth economies you're missing</td></tr>
+      <tr><td>🇪🇺 Europe</td><td><strong>10%</strong></td><td>SX5S.DE</td><td>Close to home, strong 2025 momentum</td></tr>
+      <tr><td>🥇 Gold</td><td><strong>10%</strong></td><td>4GLD.DE</td><td>Insurance policy against crashes</td></tr>
+      <tr><td>🛡️ Bonds</td><td><strong>5%</strong></td><td>IBGS.DE</td><td>Stability cushion</td></tr>
+    </tbody>
+  </table>
+  <div class="note">
+    <strong>💡 IKE first!</strong> Always max out your IKE account before putting money in the regular account. IKE = no tax on your profits. Your 2026 IKE limit is ~26-27k PLN. Check how much room you have left.
+  </div>
+</div>
+
+<!-- ==================== WHAT TO KNOW ==================== -->
+
+<h2><span class="section-icon">🔑</span>What the Market Is Saying Right Now</h2>
+
+<div class="card">
+  <p style="margin-bottom:1rem">Based on Morningstar analysis, January 2026:</p>
+  <table>
+    <thead><tr><th>Signal</th><th>What It Means for You</th></tr></thead>
+    <tbody>
+      <tr><td>🤖 AI trade still has legs</td><td>But it's no longer "everything goes up." Be selective. Your XAIX.DE is still a solid hold.</td></tr>
+      <tr><td>🇺🇸 US stocks are expensive</td><td>P/E ratios are high. International diversification matters more than usual. → Buy Europe + EM</td></tr>
+      <tr><td>🌍 International crushed 2025</td><td>Europe +32%, Emerging +30%, US +17%. The world is catching up. → Don't be 100% US-focused</td></tr>
+      <tr><td>🥇 Gold at record highs</td><td>Up 64% in 2025. Great insurance but don't overdo it. Keep at ~5% of portfolio.</td></tr>
+      <tr><td>📉 Bonds are attractive again</td><td>Interest rates are above inflation. Bonds finally make sense as a portfolio cushion.</td></tr>
+      <tr><td>⚡ Hyperscalers borrowing heavily</td><td>Big tech is taking on debt for AI infra. Not a problem yet, but worth watching.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== DOS AND DONTS ==================== -->
+
+<h2><span class="section-icon">✅❌</span>Do's and Don'ts</h2>
+
+<div class="two-col">
+  <div class="card" style="border-color:var(--green)">
+    <h3 style="color:var(--green)">✅ Do</h3>
+    <ul>
+      <li>Invest regularly (monthly, even small amounts)</li>
+      <li>Max out IKE first (tax-free gains!)</li>
+      <li>Diversify into non-tech with new money</li>
+      <li>Keep holding your current positions</li>
+      <li>Think in years, not weeks</li>
+      <li>Check portfolio once a month max</li>
+    </ul>
+  </div>
+  <div class="card" style="border-color:var(--red)">
+    <h3 style="color:var(--red)">❌ Don't</h3>
+    <ul>
+      <li>Don't sell XAIX.DE (your biggest winner)</li>
+      <li>Don't sell XLKS.UK (tiny loss, will recover)</li>
+      <li>Don't wait for "the perfect dip" to buy</li>
+      <li>Don't check prices daily</li>
+      <li>Don't put all 20k into one thing</li>
+      <li>Don't buy more duplicate ETFs</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ==================== CHECKLIST ==================== -->
+
+<h2><span class="section-icon">📋</span>Action Checklist</h2>
+
+<div class="card">
+  <ul class="checklist">
+    <li><strong>Stop buying</strong> CNDX.UK, IWDA.UK, CSPX.UK — keep EUR versions only</li>
+    <li><strong>Check IKE limit</strong> for 2026 — put as much of the 20k there as possible</li>
+    <li><strong>Buy</strong> ~8k MSCI World, ~4k Emerging Markets, ~3k Europe, ~2k Gold, ~3k Bonds</li>
+    <li><strong>Set up monthly investing</strong> — even 500 PLN/month beats zero</li>
+    <li><strong>Don't sell anything</strong> you currently hold</li>
+    <li><strong>Review in 3 months</strong> — I can re-analyze your portfolio anytime you export</li>
+  </ul>
+</div>
+
+<!-- ==================== ETF REFERENCE ==================== -->
+
+<h2><span class="section-icon">📖</span>ETF Quick Reference</h2>
+
+<div class="card">
+  <table>
+    <thead><tr><th>Ticker</th><th>Full Name</th><th>What It Does</th><th>TER</th></tr></thead>
+    <tbody>
+      <tr><td><strong>SXRT.DE</strong></td><td>iShares MSCI World Swap</td><td>1,500 companies across 23 developed countries</td><td>0.20%</td></tr>
+      <tr><td><strong>XAIX.DE</strong></td><td>Xtrackers AI & Big Data</td><td>Companies leading in AI, big data, cybersecurity</td><td>0.35%</td></tr>
+      <tr><td><strong>QDVE.DE</strong></td><td>iShares NASDAQ 100</td><td>Top 100 US tech & growth companies</td><td>0.33%</td></tr>
+      <tr><td><strong>SXR8.DE</strong></td><td>iShares Core S&P 500</td><td>Top 500 US companies across all sectors</td><td>0.07%</td></tr>
+      <tr><td><strong>EMIM.DE</strong></td><td>iShares Core MSCI EM IMI</td><td>Emerging markets: China, India, Brazil, Taiwan, etc.</td><td>0.18%</td></tr>
+      <tr><td><strong>SX5S.DE</strong></td><td>iShares Core EURO STOXX 50</td><td>Top 50 European blue-chip companies</td><td>0.10%</td></tr>
+      <tr><td><strong>4GLD.DE</strong></td><td>Xetra-Gold</td><td>Physical gold — 1 gram per unit</td><td>0.00%*</td></tr>
+      <tr><td><strong>IBGS.DE</strong></td><td>iShares EUR Govt Bond 1-3yr</td><td>Short-term European government bonds (low risk)</td><td>0.20%</td></tr>
+    </tbody>
+  </table>
+  <p style="color:var(--muted);font-size:0.8rem;margin-top:0.5rem">*Xetra-Gold has no TER but has a ~0.3%/year storage cost. TER = Total Expense Ratio (annual fee deducted from the fund).</p>
+</div>
+
+<hr class="divider">
+<p style="color:var(--muted);text-align:center;font-size:0.85rem;padding:1rem 0">
+  Generated by Clawd 🦞 · Data from XTB exports (Jan 31, 2026) · Market analysis from Morningstar
+</p>
+
+</body>
+</html>
