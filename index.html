@@ -172,6 +172,7 @@ async function unlock() {
   const pw = document.getElementById('pw').value;
   const hash = await sha256(pw);
   if (hash === HASH) {
+    sessionStorage.setItem('investment-plan-auth', 'true');
     document.getElementById('gate').style.display = 'none';
     document.getElementById('nav').style.display = 'block';
     // Load default version (v2 - deep analysis)
@@ -181,6 +182,13 @@ async function unlock() {
     document.getElementById('pw').value = '';
     document.getElementById('pw').focus();
   }
+}
+
+// Auto-unlock if already authenticated this session
+if (sessionStorage.getItem('investment-plan-auth') === 'true') {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('nav').style.display = 'block';
+  loadVersion('v2');
 }
 
 async function loadVersion(version) {
@@ -214,10 +222,10 @@ async function loadVersion(version) {
     document.head.appendChild(importedStyle);
   }
   
-  // Update content
-  const body = doc.body.innerHTML;
+  // Extract only the #content div from the fetched page (skip any gate/password divs)
+  const fetchedContent = doc.getElementById('content');
   const content = document.getElementById('content');
-  content.innerHTML = body;
+  content.innerHTML = fetchedContent ? fetchedContent.innerHTML : doc.body.innerHTML;
   content.style.display = 'block';
   
   // Scroll to top

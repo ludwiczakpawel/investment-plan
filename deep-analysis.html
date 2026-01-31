@@ -1615,5 +1615,18 @@
 
 
 
+<script>
+// When accessed directly (not loaded via index.html), check auth state
+// If authenticated via index.html, skip the gate and show content directly
+if (sessionStorage.getItem('investment-plan-auth') === 'true') {
+  const gate = document.getElementById('gate');
+  const content = document.getElementById('content');
+  if (gate) gate.style.display = 'none';
+  if (content) content.style.display = 'block';
+} else {
+  // Not authenticated — redirect to main page for login
+  window.location.href = 'index.html';
+}
+</script>
 </body>
 </html>
