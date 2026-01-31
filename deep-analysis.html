@@ -276,16 +276,7 @@
 </head>
 <body>
 
-<div id="gate">
-  <div class="lock-box">
-    <div class="emoji">🔒</div>
-    <h1>Deep Investment Analysis</h1>
-    <p>Enter password to view detailed report</p>
-    <input type="password" id="pw" placeholder="••••••" autofocus>
-    <button onclick="unlock()">Unlock</button>
-    <div class="error" id="err">Wrong password. Try again.</div>
-  </div>
-</div>
+
 
 <div id="content">
 
@@ -1622,30 +1613,7 @@
 
 </div>
 
-<script>
-const HASH = '8ecf919a1d9eb2a1f2c5a111b2610bc331d71bd458ccaca012cc974f1077ec98';
 
-async function sha256(msg) {
-  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function unlock() {
-  const pw = document.getElementById('pw').value;
-  const hash = await sha256(pw);
-  if (hash === HASH) {
-    document.getElementById('gate').style.display = 'none';
-    document.getElementById('content').style.display = 'block';
-    window.scrollTo(0, 0);
-  } else {
-    document.getElementById('err').style.display = 'block';
-    document.getElementById('pw').value = '';
-    document.getElementById('pw').focus();
-  }
-}
-
-document.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
-</script>
 
 </body>
 </html>
