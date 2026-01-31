@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Deep Investment Analysis — Paweł's Portfolio</title>
+<style>
+  :root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --orange: #d29922;
+    --purple: #bc8cff;
+    --yellow: #e3b341;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    padding: 2rem;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+  #gate {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 2rem;
+  }
+  .lock-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 380px;
+    width: 100%;
+  }
+  .lock-box .emoji { font-size: 3rem; margin-bottom: 1rem; }
+  .lock-box h1 { font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .lock-box p { color: var(--muted); font-size: 0.9rem; margin-bottom: 1.5rem; }
+  .lock-box input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 1rem;
+    text-align: center;
+    letter-spacing: 2px;
+  }
+  .lock-box input:focus { border-color: var(--accent); }
+  .lock-box button {
+    width: 100%;
+    padding: 0.75rem;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .lock-box button:hover { opacity: 0.85; }
+  .error { color: #f85149; font-size: 0.85rem; margin-top: 0.75rem; display: none; }
+  #content { display: none; }
+  h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+  h2 { font-size: 1.6rem; margin: 3rem 0 1.5rem; padding-bottom: 0.75rem; border-bottom: 2px solid var(--border); }
+  h3 { font-size: 1.2rem; margin: 2rem 0 1rem; color: var(--accent); }
+  h4 { font-size: 1rem; margin: 1.5rem 0 0.75rem; color: var(--orange); }
+  .subtitle { color: var(--muted); margin-bottom: 2rem; font-size: 1rem; }
+  .disclaimer {
+    background: #1c1207;
+    border: 1px solid #5c3d0a;
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2.5rem;
+    font-size: 0.95rem;
+    color: var(--orange);
+    line-height: 1.7;
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.75rem;
+    margin-bottom: 2rem;
+  }
+  .card-warning {
+    background: rgba(248, 81, 73, 0.05);
+    border-color: rgba(248, 81, 73, 0.3);
+  }
+  .card-success {
+    background: rgba(63, 185, 80, 0.05);
+    border-color: rgba(63, 185, 80, 0.3);
+  }
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .stat .value { font-size: 2rem; font-weight: 700; line-height: 1.2; }
+  .stat .label { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
+  .green { color: var(--green); }
+  .red { color: var(--red); }
+  .orange { color: var(--orange); }
+  .purple { color: var(--purple); }
+  .yellow { color: var(--yellow); }
+  .accent { color: var(--accent); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5rem 0;
+    font-size: 0.9rem;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(88, 166, 255, 0.05);
+  }
+  tr:hover td { background: rgba(88, 166, 255, 0.04); }
+  .bar-container {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    margin: 1.5rem 0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  .bar-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: all 0.3s;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  }
+  .bar-segment:hover {
+    filter: brightness(1.15);
+    z-index: 10;
+  }
+  .note {
+    background: rgba(88, 166, 255, 0.08);
+    border-left: 4px solid var(--accent);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+    font-size: 0.95rem;
+  }
+  .warning-box {
+    background: rgba(248, 81, 73, 0.08);
+    border-left: 4px solid var(--red);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+  }
+  .success-box {
+    background: rgba(63, 185, 80, 0.08);
+    border-left: 4px solid var(--green);
+    padding: 1rem 1.25rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1.5rem 0;
+  }
+  ul { padding-left: 1.8rem; margin: 1rem 0; }
+  li { margin: 0.6rem 0; }
+  .toc {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem 2rem;
+    margin: 2rem 0;
+  }
+  .toc h3 { margin-top: 0; }
+  .toc ul { list-style: none; padding-left: 0; }
+  .toc li { margin: 0.5rem 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 768px) {
+    body { padding: 1rem; }
+    .two-col, .three-col { grid-template-columns: 1fr; }
+    .stat-grid { grid-template-columns: repeat(2, 1fr); }
+    h1 { font-size: 1.8rem; }
+    h2 { font-size: 1.3rem; }
+  }
+  .scenario-card {
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 1.25rem;
+    background: rgba(88, 166, 255, 0.03);
+  }
+  .scenario-card h4 { margin-top: 0; }
+  .pill {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-left: 0.3rem;
+  }
+  .pill-green { background: rgba(63, 185, 80, 0.15); color: var(--green); }
+  .pill-red { background: rgba(248, 81, 73, 0.15); color: var(--red); }
+  .pill-blue { background: rgba(88, 166, 255, 0.15); color: var(--accent); }
+  .pill-orange { background: rgba(210, 153, 34, 0.15); color: var(--orange); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 3rem 0; }
+  code {
+    background: rgba(88, 166, 255, 0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    font-family: 'Monaco', 'Courier New', monospace;
+    font-size: 0.85em;
+  }
+  .insight {
+    background: linear-gradient(135deg, rgba(88, 166, 255, 0.1), rgba(188, 140, 255, 0.1));
+    border: 1px solid var(--purple);
+    border-radius: 8px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .insight strong { color: var(--purple); }
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+  }
+  .progress-fill {
+    height: 100%;
+    transition: width 0.3s;
+  }
+</style>
+</head>
+<body>
+
+<div id="gate">
+  <div class="lock-box">
+    <div class="emoji">🔒</div>
+    <h1>Deep Investment Analysis</h1>
+    <p>Enter password to view detailed report</p>
+    <input type="password" id="pw" placeholder="••••••" autofocus>
+    <button onclick="unlock()">Unlock</button>
+    <div class="error" id="err">Wrong password. Try again.</div>
+  </div>
+</div>
+
+<div id="content">
+
+<h1>🧠 Deep Investment Analysis</h1>
+<p class="subtitle">Comprehensive Portfolio Review & Strategy — Generated January 31, 2026</p>
+
+<div class="disclaimer">
+  ⚠️ <strong>Critical Disclaimer:</strong> I'm an AI assistant, not a licensed financial advisor. This analysis is based on available data and research as of January 2026. Markets are unpredictable. Past performance doesn't guarantee future results. This is educational analysis to help inform your decisions — always verify critical decisions with a qualified financial professional and do your own due diligence before investing.
+</div>
+
+<!-- ==================== TABLE OF CONTENTS ==================== -->
+
+<div class="toc">
+  <h3>📑 Table of Contents</h3>
+  <ul>
+    <li><a href="#diagnosis">A. Current Portfolio Diagnosis</a></li>
+    <li><a href="#market">B. Market Context & Outlook (2026)</a></li>
+    <li><a href="#plan">C. Concrete Plan: Investing the 20,000 PLN</a></li>
+    <li><a href="#strategy">D. Long-Term Strategy (1/3/5 Years)</a></li>
+    <li><a href="#risk">E. Risk Scenarios & Stress Testing</a></li>
+    <li><a href="#mistakes">F. Common Mistakes to Avoid</a></li>
+    <li><a href="#sources">G. Sources & References</a></li>
+  </ul>
+</div>
+
+<!-- ==================== A. CURRENT PORTFOLIO DIAGNOSIS ==================== -->
+
+<h2 id="diagnosis">A. Current Portfolio Diagnosis</h2>
+
+<h3>📊 Portfolio Summary</h3>
+
+<div class="stat-grid">
+  <div class="stat">
+    <div class="value accent">32,200</div>
+    <div class="label">Total Value (PLN)</div>
+  </div>
+  <div class="stat">
+    <div class="value green">+1,171</div>
+    <div class="label">Unrealized Profit (PLN)</div>
+  </div>
+  <div class="stat">
+    <div class="value green">+3.7%</div>
+    <div class="label">Return (6 months)</div>
+  </div>
+  <div class="stat">
+    <div class="value orange">~7.4%</div>
+    <div class="label">Annualized Return</div>
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔍 Allocation Breakdown by Asset Class</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Asset Class</th><th>Allocation</th><th>Amount (PLN)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Equities (Stocks)</strong></td><td>100%</td><td>32,149</td></tr>
+      <tr><td>Bonds</td><td>0%</td><td>0</td></tr>
+      <tr><td>Commodities (Gold, etc.)</td><td>0%</td><td>0</td></tr>
+      <tr><td>Real Estate</td><td>0%</td><td>0</td></tr>
+      <tr><td>Cash</td><td>0.2%</td><td>51</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warning-box">
+    <strong>⚠️ Risk Alert:</strong> 100% equity allocation means maximum volatility. In a market crash (-30%), your portfolio could drop by the same amount (~9,600 PLN loss). You have zero defensive assets to cushion downturns.
+  </div>
+</div>
+
+<div class="card">
+  <h3>🌍 Geographic Allocation</h3>
+  
+  <div class="bar-container">
+    <div class="bar-segment" style="width:73%;background:#3a7ca5">USA 73%</div>
+    <div class="bar-segment" style="width:15%;background:#58a6ff">Global 15%</div>
+    <div class="bar-segment" style="width:6%;background:#7c8089">Japan 6%</div>
+    <div class="bar-segment" style="width:3%;background:#6e7681">UK 3%</div>
+    <div class="bar-segment" style="width:3%;background:#484f58">Other 3%</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Region</th><th>Percentage</th><th>Value (PLN)</th><th>Comment</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>United States</strong></td><td>~73%</td><td>~23,500</td><td>S&P 500, NASDAQ, AI/Tech exposure</td></tr>
+      <tr><td><strong>Developed Markets (excl. US)</strong></td><td>~15%</td><td>~4,800</td><td>Japan, UK, Europe via MSCI World</td></tr>
+      <tr><td><strong>Japan</strong></td><td>~6%</td><td>~1,900</td><td>Part of MSCI World allocation</td></tr>
+      <tr><td><strong>Europe</strong></td><td>~4%</td><td>~1,300</td><td>UK, Germany, France via World indices</td></tr>
+      <tr><td><strong>Emerging Markets</strong></td><td>0%</td><td>0</td><td>No exposure to China, India, Brazil</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <strong>💡 Key Insight:</strong> You're betting 73% on the US economy. If the US underperforms (like it did vs. Europe in 2025: +17% vs +32%), you miss out. You have ZERO exposure to emerging markets, which grew +30% in 2025.
+  </div>
+</div>
+
+<div class="card">
+  <h3>🏭 Sector Allocation</h3>
+  
+  <div class="bar-container">
+    <div class="bar-segment" style="width:62%;background:#f85149">Technology 62%</div>
+    <div class="bar-segment" style="width:14%;background:#3fb950">Financials 14%</div>
+    <div class="bar-segment" style="width:10%;background:#58a6ff">Consumer 10%</div>
+    <div class="bar-segment" style="width:8%;background:#d29922">Industrials 8%</div>
+    <div class="bar-segment" style="width:6%;background:#7c8089">Other 6%</div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>Sector</th><th>Allocation</th><th>Primary Exposure From</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Technology</strong></td><td>~62%</td><td>XAIX (AI), CNDX/QDVE (NASDAQ), XLKS (Info Tech)</td></tr>
+      <tr><td><strong>Financials</strong></td><td>~14%</td><td>MSCI World, S&P 500</td></tr>
+      <tr><td><strong>Consumer Discretionary</strong></td><td>~10%</td><td>MSCI World, S&P 500 (Amazon, Tesla)</td></tr>
+      <tr><td><strong>Industrials</strong></td><td>~8%</td><td>MSCI World</td></tr>
+      <tr><td><strong>Healthcare</strong></td><td>~6%</td><td>MSCI World, S&P 500</td></tr>
+    </tbody>
+  </table>
+
+  <div class="warning-box">
+    <strong>🚨 Critical Concentration Risk:</strong> 62% in technology is extremely aggressive. For context:
+    <ul style="margin-top:0.75rem">
+      <li>Dot-com crash (2000-2002): Tech stocks dropped -78%</li>
+      <li>If tech drops 30% tomorrow, your portfolio loses ~6,000 PLN (-19%)</li>
+      <li>MSCI World is only ~28% tech — you're 2.2x more concentrated</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔄 Overlap Analysis</h3>
+  
+  <p><strong>Problem:</strong> You own the same companies multiple times through different ETFs. This creates "false diversification" — you think you own 8 different ETFs, but many hold identical stocks.</p>
+
+  <table>
+    <thead>
+      <tr><th>Your Holdings</th><th>Top 3 Overlapping Stocks</th><th>Overlap %</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>CNDX.UK + QDVE.DE</td>
+        <td>NVIDIA, Apple, Microsoft</td>
+        <td><span class="red">~98%</span></td>
+      </tr>
+      <tr>
+        <td>CSPX.UK + SXR8.DE</td>
+        <td>Apple, Microsoft, NVIDIA</td>
+        <td><span class="red">~99%</span></td>
+      </tr>
+      <tr>
+        <td>IWDA.UK + SXRT.DE</td>
+        <td>NVIDIA, Apple, Microsoft</td>
+        <td><span class="red">~97%</span></td>
+      </tr>
+      <tr>
+        <td>XAIX.DE + CNDX/QDVE</td>
+        <td>NVIDIA, Microsoft, Broadcom</td>
+        <td><span class="orange">~45%</span></td>
+      </tr>
+      <tr>
+        <td>S&P 500 + MSCI World</td>
+        <td>Apple, Microsoft, Amazon</td>
+        <td><span class="orange">~68%</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Top 10 Individual Stock Concentration (Estimated)</h4>
+  <table>
+    <thead>
+      <tr><th>Company</th><th>% of Portfolio</th><th>Value (PLN)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>NVIDIA</td><td>~9.5%</td><td>~3,060</td></tr>
+      <tr><td>Apple</td><td>~8.2%</td><td>~2,640</td></tr>
+      <tr><td>Microsoft</td><td>~7.8%</td><td>~2,510</td></tr>
+      <tr><td>Amazon</td><td>~4.1%</td><td>~1,320</td></tr>
+      <tr><td>Alphabet (Google)</td><td>~3.9%</td><td>~1,260</td></tr>
+      <tr><td>Broadcom</td><td>~3.2%</td><td>~1,030</td></tr>
+      <tr><td>Meta (Facebook)</td><td>~2.8%</td><td>~900</td></tr>
+      <tr><td>Tesla</td><td>~2.5%</td><td>~805</td></tr>
+      <tr><td colspan="2"><strong>Total Top 8 Stocks</strong></td><td><strong>~13,525 (42%)</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Translation:</strong> 42% of your entire portfolio is in just 8 companies. If these tech giants stumble, you feel the pain immediately. This is the opposite of diversification.
+  </div>
+</div>
+
+<div class="card">
+  <h3>💱 Currency Exposure Analysis</h3>
+  
+  <p><strong>Your situation:</strong> You earn in PLN 🇵🇱, but invest in EUR 🇪🇺 and USD 🇺🇸 denominated assets.</p>
+
+  <table>
+    <thead>
+      <tr><th>Currency</th><th>Allocation</th><th>Value (PLN)</th><th>Risk</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>EUR (Euro)</strong></td>
+        <td>~57%</td>
+        <td>~18,350</td>
+        <td>If EUR/PLN drops 10%, you lose ~1,835 PLN in value</td>
+      </tr>
+      <tr>
+        <td><strong>USD (US Dollar)</strong></td>
+        <td>~43%</td>
+        <td>~13,800</td>
+        <td>If USD/PLN drops 10%, you lose ~1,380 PLN in value</td>
+      </tr>
+      <tr>
+        <td><strong>PLN (Polish Złoty)</strong></td>
+        <td>~0.2%</td>
+        <td>51</td>
+        <td>No currency risk</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Historical Context (2024-2025)</h4>
+  <ul>
+    <li>EUR/PLN moved from ~4.30 to ~4.25 (-1.2%)</li>
+    <li>USD/PLN moved from ~3.85 to ~4.05 (+5.2%)</li>
+    <li>Strong USD helped your USD holdings; weak EUR slightly hurt EUR holdings</li>
+  </ul>
+
+  <div class="insight">
+    <strong>💡 Is this bad?</strong> Not necessarily. Long-term investors often benefit from currency diversification. When PLN strengthens, your foreign assets lose value in PLN terms, but when PLN weakens, you gain. Over 20+ years, this tends to balance out. However, it does add short-term volatility.
+  </div>
+
+  <h4>EUR vs USD ETFs: Which to Choose?</h4>
+  <table>
+    <thead>
+      <tr><th>Factor</th><th>EUR ETFs (SXRT, QDVE, SXR8)</th><th>USD ETFs (IWDA, CNDX, CSPX)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Currency risk vs PLN</td><td class="green">Lower (EUR closer to PLN)</td><td class="orange">Higher</td></tr>
+      <tr><td>Liquidity</td><td class="green">High (XETRA)</td><td class="green">High (LSE)</td></tr>
+      <tr><td>Spread costs</td><td class="green">Usually lower</td><td class="orange">Slightly higher</td></tr>
+      <tr><td>TER (fees)</td><td>Similar</td><td>Similar</td></tr>
+      <tr><td><strong>Recommendation</strong></td><td class="green"><strong>Prefer EUR</strong></td><td>OK but not optimal</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="card">
+  <h3>💸 Fee Analysis (TER)</h3>
+  
+  <p><strong>TER (Total Expense Ratio)</strong> is the annual fee automatically deducted from the fund. It's invisible but compounds over time.</p>
+
+  <table>
+    <thead>
+      <tr><th>ETF</th><th>ISIN</th><th>Value (PLN)</th><th>TER</th><th>Annual Cost (PLN)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>XAIX.DE (AI & Big Data)</td><td>DE000A2N9JW9</td><td>11,838</td><td>0.35%</td><td>41</td></tr>
+      <tr><td>CNDX.UK (NASDAQ USD)</td><td>IE00B53SZB19</td><td>5,086</td><td>0.33%</td><td>17</td></tr>
+      <tr><td>XLKS.UK (S&P Tech)</td><td>IE00BMW42900</td><td>3,427</td><td>0.15%</td><td>5</td></tr>
+      <tr><td>QDVE.DE (NASDAQ EUR)</td><td>IE00BYVQ9F29</td><td>3,296</td><td>0.33%</td><td>11</td></tr>
+      <tr><td>SXRT.DE (MSCI World)</td><td>LU0659579733</td><td>3,223</td><td>0.20%</td><td>6</td></tr>
+      <tr><td>CSPX.UK (S&P 500 USD)</td><td>IE00B5BMR087</td><td>2,079</td><td>0.07%</td><td>1</td></tr>
+      <tr><td>IWDA.UK (MSCI World USD)</td><td>IE00B4L5Y983</td><td>1,702</td><td>0.20%</td><td>3</td></tr>
+      <tr><td>SXR8.DE (S&P 500 EUR)</td><td>IE00B5BMR087</td><td>1,254</td><td>0.07%</td><td>1</td></tr>
+      <tr><td colspan="4"><strong>Total Annual Fee</strong></td><td><strong>~85 PLN/year</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Impact Over Time</h4>
+  <table>
+    <thead>
+      <tr><th>Period</th><th>Cost (Current Portfolio)</th><th>Lost Growth (7% return)</th><th>Total Impact</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1 year</td><td>85 PLN</td><td>6 PLN</td><td>91 PLN</td></tr>
+      <tr><td>5 years</td><td>425 PLN</td><td>~75 PLN</td><td>~500 PLN</td></tr>
+      <tr><td>10 years</td><td>850 PLN</td><td>~380 PLN</td><td>~1,230 PLN</td></tr>
+      <tr><td>20 years</td><td>1,700 PLN</td><td>~2,100 PLN</td><td>~3,800 PLN</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Context:</strong> An average TER of 0.26% is reasonable. For comparison:
+    <ul style="margin-top:0.5rem">
+      <li>Active mutual funds: 1-2% TER (4-8x more expensive!)</li>
+      <li>Best-in-class broad ETFs: 0.07-0.20%</li>
+      <li>Your AI/Big Data ETF (0.35%): Premium price for thematic focus — justifiable if you believe in the theme</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3>🏦 Tax Analysis: IKE vs Regular Account</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>IKE (Retirement)</th><th>Regular Account</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Current Value</strong></td><td>~23,998 PLN</td><td>~5,163 PLN</td></tr>
+      <tr><td><strong>Profit/Loss</strong></td><td>+1,038 PLN</td><td>+133 PLN</td></tr>
+      <tr><td><strong>Tax on Gains</strong></td><td class="green">0% (tax-free!)</td><td class="red">19% Belka tax</td></tr>
+      <tr><td><strong>Tax Owed Now</strong></td><td>0 PLN</td><td>~25 PLN (if sold)</td></tr>
+      <tr><td><strong>Annual Limit (2026)</strong></td><td>~27,418 PLN</td><td>Unlimited</td></tr>
+      <tr><td><strong>Withdrawal Rules</strong></td><td>After age 65 (or penalty)</td><td>Anytime</td></tr>
+      <tr><td><strong>Priority</strong></td><td class="green"><strong>ALWAYS FILL FIRST</strong></td><td>Use after IKE maxed</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Example: 20-Year Tax Savings (IKE vs Regular)</h4>
+  <p>Assume you invest 20,000 PLN and it grows to 60,000 PLN (40,000 profit):</p>
+  <ul>
+    <li><strong>IKE:</strong> 0 PLN tax → You keep all 60,000 PLN</li>
+    <li><strong>Regular:</strong> 7,600 PLN tax (19% of 40,000) → You keep 52,400 PLN</li>
+    <li><strong>Difference:</strong> <span class="green">7,600 PLN saved by using IKE</span></li>
+  </ul>
+
+  <div class="success-box">
+    <strong>✅ Action Item:</strong> Check how much IKE room you have left for 2026. The limit is based on 1.2x average salary (~27,418 PLN for 2026). Prioritize putting every złoty there before the regular account.
+  </div>
+</div>
+
+<!-- ==================== B. MARKET CONTEXT ==================== -->
+
+<h2 id="market">B. Market Context & Outlook (2026)</h2>
+
+<div class="card">
+  <h3>📈 Current Valuations (as of Jan 2026)</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Index/Region</th><th>P/E Ratio</th><th>Historical Average</th><th>Assessment</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>S&P 500 (US)</strong></td><td>~24-26</td><td>~16-18</td><td class="orange">Expensive (40% above avg)</td></tr>
+      <tr><td><strong>NASDAQ 100</strong></td><td>~32-35</td><td>~22-25</td><td class="red">Very Expensive</td></tr>
+      <tr><td><strong>MSCI World</strong></td><td>~20-22</td><td>~15-17</td><td class="orange">Moderately Expensive</td></tr>
+      <tr><td><strong>Europe (STOXX 600)</strong></td><td>~13-15</td><td>~14-16</td><td class="green">Fair to Cheap</td></tr>
+      <tr><td><strong>Emerging Markets</strong></td><td>~12-14</td><td>~12-14</td><td class="green">Fair Value</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>What P/E means:</strong> Price-to-Earnings ratio. If S&P 500 has P/E of 25, it means investors pay $25 for every $1 of company earnings. Higher = more expensive. When P/E is above historical average, future returns tend to be lower (but not guaranteed).
+  </div>
+
+  <div class="warning-box">
+    <strong>⚠️ Implication for You:</strong> Your portfolio is 73% US stocks, which are currently expensive. This doesn't mean they'll crash, but it means:
+    <ul style="margin-top:0.5rem">
+      <li>Expected future returns might be lower than historical ~10%/year</li>
+      <li>If valuations "normalize" (P/E drops back to 18), prices could fall 20-30%</li>
+      <li>Cheaper regions (Europe, EM) might offer better forward returns</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3>📊 Recent Performance (2025 & Early 2026)</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Index</th><th>2025 Return</th><th>Jan 2026 YTD</th><th>Commentary</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>MSCI World</strong></td><td class="green">+26.2%</td><td class="green">+1.1%</td><td>Strong year, now consolidating</td></tr>
+      <tr><td><strong>S&P 500</strong></td><td class="green">~+23%</td><td class="green">~+1-2%</td><td>Tech rally drove gains</td></tr>
+      <tr><td><strong>NASDAQ 100</strong></td><td class="green">~+28%</td><td class="orange">~+0.5%</td><td>AI stocks led, now cooling</td></tr>
+      <tr><td><strong>Europe (STOXX 600)</strong></td><td class="green">+32%</td><td>Flat</td><td>Outperformed US for first time in years</td></tr>
+      <tr><td><strong>Emerging Markets</strong></td><td class="green">+30%</td><td>Flat</td><td>Strong rebound after years of underperformance</td></tr>
+      <tr><td><strong>Gold</strong></td><td class="green">+64%</td><td class="orange">~-2%</td><td>Record highs, now profit-taking</td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <strong>💡 Key Takeaway:</strong> 2025 was exceptional across the board. International markets (Europe +32%, EM +30%) beat US (+23%) for the first time in years. This could signal a rotation away from US dominance — or just a one-year blip. Either way, it shows why geographic diversification matters.
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔮 2026 Outlook by Asset Class</h3>
+  
+  <h4>🇺🇸 US Tech & AI</h4>
+  <div class="two-col">
+    <div>
+      <strong class="green">Bullish Case:</strong>
+      <ul>
+        <li>AI adoption accelerating across industries</li>
+        <li>Cloud spending still growing 20%+ annually</li>
+        <li>Big tech balance sheets remain strong</li>
+        <li>Productivity gains from AI could boost margins</li>
+      </ul>
+    </div>
+    <div>
+      <strong class="red">Bearish Case:</strong>
+      <ul>
+        <li>Valuations stretched (NASDAQ P/E ~33)</li>
+        <li>AI "bubble" fears if ROI doesn't materialize</li>
+        <li>Big tech borrowing heavily for AI infrastructure</li>
+        <li>Regulatory pressure increasing (antitrust)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note" style="margin-top:1rem">
+    <strong>My Take:</strong> AI trade still has legs, but it's no longer "free money." Be selective. Your XAIX.DE (AI & Big Data ETF) is a solid thematic bet, but don't overweight it. Keep it at 15-25% max.
+  </div>
+
+  <h4>🌍 International Stocks (Europe, Japan, UK)</h4>
+  <div class="two-col">
+    <div>
+      <strong class="green">Bullish Case:</strong>
+      <ul>
+        <li>Valuations cheaper than US (P/E 13-15 vs 25)</li>
+        <li>Europe outperformed in 2025 (+32%)</li>
+        <li>ECB cutting rates → stimulus for economy</li>
+        <li>Less exposed to AI bubble risk</li>
+      </ul>
+    </div>
+    <div>
+      <strong class="red">Bearish Case:</strong>
+      <ul>
+        <li>Slower growth than US historically</li>
+        <li>Geopolitical risks (Ukraine, energy)</li>
+        <li>Weaker innovation ecosystem</li>
+        <li>Currency headwinds if EUR weakens</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note" style="margin-top:1rem">
+    <strong>My Take:</strong> Value opportunity. You currently have ~15% international via MSCI World. Consider increasing to 25-30%. Cheaper valuations + recent momentum = compelling case.
+  </div>
+
+  <h4>🌏 Emerging Markets</h4>
+  <div class="two-col">
+    <div>
+      <strong class="green">Bullish Case:</strong>
+      <ul>
+        <li>Valuation gap vs developed markets widest in decade</li>
+        <li>China stimulus measures kicking in</li>
+        <li>India growth story intact (7%+ GDP growth)</li>
+        <li>Commodity exporters benefit from infrastructure boom</li>
+      </ul>
+    </div>
+    <div>
+      <strong class="red">Bearish Case:</strong>
+      <ul>
+        <li>China property sector still weak</li>
+        <li>Political instability in some regions</li>
+        <li>Currency volatility vs USD/EUR</li>
+        <li>Less transparency and corporate governance</li>
+      </ul>
+    </div>
+  </div>
+  <div class="warning-box" style="margin-top:1rem">
+    <strong>⚠️ Your Gap:</strong> You have ZERO emerging markets exposure. This is ~25% of global market cap you're ignoring. Even a small allocation (10-15%) would improve diversification.
+  </div>
+
+  <h4>🥇 Gold</h4>
+  <div class="two-col">
+    <div>
+      <strong class="green">Bullish Case:</strong>
+      <ul>
+        <li>Central banks buying aggressively</li>
+        <li>Geopolitical tensions support safe-haven demand</li>
+        <li>Inflation hedge if prices re-accelerate</li>
+        <li>Negative correlation with stocks (diversification)</li>
+      </ul>
+    </div>
+    <div>
+      <strong class="red">Bearish Case:</strong>
+      <ul>
+        <li>Already up 64% in 2025 — due for pullback?</li>
+        <li>No yield (opportunity cost vs bonds)</li>
+        <li>If inflation stays low, less appeal</li>
+        <li>Strong USD could pressure gold prices</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note" style="margin-top:1rem">
+    <strong>My Take:</strong> Don't chase the rally. Gold at record highs is NOT the time to go all-in. But 5-10% allocation makes sense as portfolio insurance. Xetra-Gold (4GLD.DE) is the best option in Europe (physical-backed, 0% TER).
+  </div>
+
+  <h4>🛡️ Bonds</h4>
+  <div class="two-col">
+    <div>
+      <strong class="green">Bullish Case:</strong>
+      <ul>
+        <li>Yields finally above inflation (real yield positive)</li>
+        <li>Diversification: negative correlation with stocks</li>
+        <li>If recession hits, bonds rally as stocks fall</li>
+        <li>Stable income stream</li>
+      </ul>
+    </div>
+    <div>
+      <strong class="red">Bearish Case:</strong>
+      <ul>
+        <li>Still low yields vs historical average</li>
+        <li>If inflation spikes, bond prices fall</li>
+        <li>Opportunity cost vs stocks (lower returns)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="note" style="margin-top:1rem">
+    <strong>My Take:</strong> Bonds are back. After years of negative real yields, they're finally attractive again. For a 100% equity portfolio, adding 5-10% bonds reduces volatility significantly without killing returns. Consider short-duration (1-3 year) government bonds (IBGS.DE).
+  </div>
+</div>
+
+<div class="card">
+  <h3>💹 Interest Rates & Inflation</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Region</th><th>Current Rate</th><th>Inflation</th><th>Trend</th><th>Impact</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Poland (NBP)</strong></td>
+        <td>5.75%</td>
+        <td>~4.5%</td>
+        <td class="orange">Holding steady</td>
+        <td>Restrictive for growth, supportive for PLN</td>
+      </tr>
+      <tr>
+        <td><strong>ECB (Europe)</strong></td>
+        <td>3.00%</td>
+        <td>~2.5%</td>
+        <td class="green">Cutting</td>
+        <td>Stimulative for European stocks</td>
+      </tr>
+      <tr>
+        <td><strong>Fed (US)</strong></td>
+        <td>4.50%</td>
+        <td>~3.0%</td>
+        <td class="orange">Pause mode</td>
+        <td>Neutral — watching data</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <strong>💡 What This Means:</strong> Central banks are done hiking. ECB is cutting, which is good for European stocks. Fed is on hold. If inflation stays controlled, this is a "Goldilocks" scenario for stocks — not too hot, not too cold.
+  </div>
+</div>
+
+<div class="card">
+  <h3>💱 Currency Outlook: EUR/PLN, USD/PLN</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Pair</th><th>Current</th><th>1-Year Outlook</th><th>Impact on Your Portfolio</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>EUR/PLN</strong></td>
+        <td>~4.25</td>
+        <td class="orange">Range-bound 4.15-4.35</td>
+        <td>Neutral — modest volatility expected</td>
+      </tr>
+      <tr>
+        <td><strong>USD/PLN</strong></td>
+        <td>~4.05</td>
+        <td class="orange">Range-bound 3.90-4.20</td>
+        <td>Neutral — USD strength depends on Fed</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Bottom Line:</strong> No dramatic currency moves expected. PLN is stable. Your foreign currency exposure (57% EUR, 43% USD) is fine. Over 20+ years, currency fluctuations tend to wash out.
+  </div>
+</div>
+
+<!-- ==================== C. CONCRETE PLAN ==================== -->
+
+<h2 id="plan">C. Concrete Plan: Investing the 20,000 PLN</h2>
+
+<div class="card">
+  <h3>🎯 Investment Principles</h3>
+  <ul>
+    <li><strong>IKE First:</strong> Max out IKE before regular account (tax-free gains)</li>
+    <li><strong>Diversify Geography:</strong> Reduce US concentration from 73% → ~55-60%</li>
+    <li><strong>Add Defensive Assets:</strong> Bonds + Gold for crash protection</li>
+    <li><strong>Don't Sell Winners:</strong> Keep XAIX, SXRT, etc. — just stop buying duplicates</li>
+    <li><strong>EUR Over USD:</strong> For PLN earners, EUR ETFs have lower currency volatility</li>
+  </ul>
+</div>
+
+<h3>💼 Three Allocation Scenarios</h3>
+
+<div class="three-col">
+  <!-- Conservative -->
+  <div class="scenario-card">
+    <h4 class="green">Conservative</h4>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem">Lower volatility, more stability, slower growth</p>
+    
+    <table style="font-size:0.85rem">
+      <thead>
+        <tr><th>Asset</th><th>PLN</th><th>ETF</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>🌍 World</td><td>7,000</td><td>SXRT.DE</td></tr>
+        <tr><td>🌏 EM</td><td>3,000</td><td>EMIM.DE</td></tr>
+        <tr><td>🇪🇺 Europe</td><td>2,000</td><td>SX5S.DE</td></tr>
+        <tr><td>🥇 Gold</td><td>3,000</td><td>4GLD.DE</td></tr>
+        <tr><td>🛡️ Bonds</td><td>5,000</td><td>IBGS.DE</td></tr>
+      </tbody>
+    </table>
+    
+    <p style="margin-top:1rem;font-size:0.85rem"><strong>After Investment:</strong></p>
+    <ul style="font-size:0.8rem">
+      <li>Tech: ~45%</li>
+      <li>Bonds: ~10%</li>
+      <li>Gold: ~6%</li>
+      <li>EM: ~6%</li>
+    </ul>
+    
+    <div class="note" style="font-size:0.8rem;margin-top:1rem">
+      <strong>Best for:</strong> Risk-averse investors, or if you think a recession is coming soon. Bonds + gold = ~16% defensive buffer.
+    </div>
+  </div>
+
+  <!-- Balanced -->
+  <div class="scenario-card" style="border-color:var(--accent)">
+    <h4 class="accent">Balanced ✅ Recommended</h4>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem">Moderate risk, good diversification, solid growth potential</p>
+    
+    <table style="font-size:0.85rem">
+      <thead>
+        <tr><th>Asset</th><th>PLN</th><th>ETF</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>🌍 World</td><td>8,000</td><td>SXRT.DE</td></tr>
+        <tr><td>🌏 EM</td><td>4,000</td><td>EMIM.DE</td></tr>
+        <tr><td>🇪🇺 Europe</td><td>3,000</td><td>SX5S.DE</td></tr>
+        <tr><td>🥇 Gold</td><td>2,000</td><td>4GLD.DE</td></tr>
+        <tr><td>🛡️ Bonds</td><td>3,000</td><td>IBGS.DE</td></tr>
+      </tbody>
+    </table>
+    
+    <p style="margin-top:1rem;font-size:0.85rem"><strong>After Investment:</strong></p>
+    <ul style="font-size:0.8rem">
+      <li>Tech: ~48%</li>
+      <li>World/EM: ~30%</li>
+      <li>Bonds: ~6%</li>
+      <li>Gold: ~4%</li>
+    </ul>
+    
+    <div class="success-box" style="font-size:0.8rem;margin-top:1rem">
+      <strong>Why recommended:</strong> Keeps your tech conviction but adds meaningful diversification. Bonds + gold = crash cushion. EM = growth upside. Best balance for most investors.
+    </div>
+  </div>
+
+  <!-- Aggressive -->
+  <div class="scenario-card">
+    <h4 class="orange">Aggressive</h4>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:1rem">Higher volatility, maximum growth potential, no safety net</p>
+    
+    <table style="font-size:0.85rem">
+      <thead>
+        <tr><th>Asset</th><th>PLN</th><th>ETF</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>🌍 World</td><td>10,000</td><td>SXRT.DE</td></tr>
+        <tr><td>🌏 EM</td><td>5,000</td><td>EMIM.DE</td></tr>
+        <tr><td>🇪🇺 Europe</td><td>3,000</td><td>SX5S.DE</td></tr>
+        <tr><td>🤖 AI</td><td>2,000</td><td>XAIX.DE</td></tr>
+      </tbody>
+    </table>
+    
+    <p style="margin-top:1rem;font-size:0.85rem"><strong>After Investment:</strong></p>
+    <ul style="font-size:0.8rem">
+      <li>Tech: ~52%</li>
+      <li>World/EM: ~35%</li>
+      <li>Bonds: 0%</li>
+      <li>Gold: 0%</li>
+    </ul>
+    
+    <div class="warning-box" style="font-size:0.8rem;margin-top:1rem">
+      <strong>Warning:</strong> Still 100% stocks. If market crashes -30%, you drop -30%. Only choose this if you have strong nerves and won't panic-sell in a downturn.
+    </div>
+  </div>
+</div>
+
+<div class="card" style="margin-top:2rem">
+  <h3>📋 Step-by-Step Execution Plan (Balanced Scenario)</h3>
+  
+  <ol style="line-height:2">
+    <li><strong>Check IKE Limit:</strong> Log into XTB → IKE account → check how much room left before hitting ~27,418 PLN annual limit</li>
+    <li><strong>Prioritize IKE:</strong> If you have room (e.g., ~3,420 PLN left), put as much of the 20k there as possible</li>
+    <li><strong>Buy in IKE First:</strong>
+      <ul style="margin-top:0.5rem">
+        <li>8,000 PLN → SXRT.DE (iShares MSCI World Swap UCITS ETF EUR)</li>
+        <li>4,000 PLN → EMIM.DE (iShares Core MSCI EM IMI UCITS ETF)</li>
+      </ul>
+    </li>
+    <li><strong>Buy in Regular Account:</strong>
+      <ul style="margin-top:0.5rem">
+        <li>3,000 PLN → SX5S.DE (iShares Core EURO STOXX 50 UCITS ETF)</li>
+        <li>2,000 PLN → 4GLD.DE (Xetra-Gold)</li>
+        <li>3,000 PLN → IBGS.DE (iShares EUR Govt Bond 1-3yr UCITS ETF)</li>
+      </ul>
+    </li>
+    <li><strong>Set up Monthly DCA:</strong> (see Long-Term Strategy section below)</li>
+  </ol>
+</div>
+
+<div class="card">
+  <h3>💰 Expected Returns (Balanced Scenario)</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Scenario</th><th>Annual Return</th><th>Value After 5 Years</th><th>Value After 10 Years</th><th>Value After 20 Years</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Pessimistic</strong> (Bear market)</td>
+        <td>+3%</td>
+        <td>~60,500 PLN</td>
+        <td>~70,000 PLN</td>
+        <td>~94,600 PLN</td>
+      </tr>
+      <tr>
+        <td><strong>Base Case</strong></td>
+        <td>+7%</td>
+        <td>~73,000 PLN</td>
+        <td>~102,700 PLN</td>
+        <td>~202,000 PLN</td>
+      </tr>
+      <tr>
+        <td><strong>Optimistic</strong> (Bull market)</td>
+        <td>+10%</td>
+        <td>~84,000 PLN</td>
+        <td>~135,600 PLN</td>
+        <td>~346,000 PLN</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Assumptions:</strong> No additional contributions. Historical stock returns are ~7-10% long-term, bonds ~3-5%, gold ~5-7%. Your mix should average ~7% in a normal market. Actual results will vary wildly year-to-year.
+  </div>
+</div>
+
+<div class="card">
+  <h3>💸 Fee Comparison Across Scenarios</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Scenario</th><th>Weighted Avg TER</th><th>Annual Fee (52k portfolio)</th><th>20-Year Cost</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Current Portfolio</td><td>0.26%</td><td>~135 PLN</td><td>~4,900 PLN</td></tr>
+      <tr><td>After Conservative</td><td>0.18%</td><td>~94 PLN</td><td>~3,400 PLN</td></tr>
+      <tr><td>After Balanced</td><td>0.19%</td><td>~99 PLN</td><td>~3,600 PLN</td></tr>
+      <tr><td>After Aggressive</td><td>0.22%</td><td>~114 PLN</td><td>~4,100 PLN</td></tr>
+    </tbody>
+  </table>
+
+  <div class="note">
+    <strong>Takeaway:</strong> All scenarios reduce fees vs current setup by adding low-cost ETFs. Savings are modest but compound over decades.
+  </div>
+</div>
+
+<!-- ==================== D. LONG-TERM STRATEGY ==================== -->
+
+<h2 id="strategy">D. Long-Term Strategy (1/3/5 Years)</h2>
+
+<div class="card">
+  <h3>🎯 Target Allocations Over Time</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Asset Class</th><th>1 Year (Age ~30)</th><th>3 Years (Age ~33)</th><th>5 Years (Age ~35)</th><th>Rationale</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>US Tech/AI</strong></td>
+        <td>45-50%</td>
+        <td>35-40%</td>
+        <td>30-35%</td>
+        <td>Gradually reduce concentration risk</td>
+      </tr>
+      <tr>
+        <td><strong>Broad Equity (World/EM/Europe)</strong></td>
+        <td>35-40%</td>
+        <td>40-45%</td>
+        <td>45-50%</td>
+        <td>Build geographic diversification</td>
+      </tr>
+      <tr>
+        <td><strong>Gold</strong></td>
+        <td>5%</td>
+        <td>5-7%</td>
+        <td>5-7%</td>
+        <td>Portfolio insurance, keep stable</td>
+      </tr>
+      <tr>
+        <td><strong>Bonds</strong></td>
+        <td>5-10%</td>
+        <td>10-15%</td>
+        <td>10-15%</td>
+        <td>Increase stability as wealth grows</td>
+      </tr>
+      <tr>
+        <td><strong>Cash</strong></td>
+        <td>0-2%</td>
+        <td>0-2%</td>
+        <td>0-2%</td>
+        <td>Minimal — deploy to work</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <strong>💡 Philosophy:</strong> At 30, you can afford high equity exposure (time heals volatility). But don't be reckless. By 35, you'll likely have more wealth to protect → gradually shift toward stability. The shift is slow — not dramatic changes.
+  </div>
+</div>
+
+<div class="card">
+  <h3>💵 Monthly DCA (Dollar Cost Averaging) Plan</h3>
+  
+  <p><strong>What is DCA?</strong> Investing a fixed amount every month, regardless of market conditions. This removes emotional decision-making and smooths out volatility.</p>
+
+  <h4>Example: 1,000 PLN/month</h4>
+  <table>
+    <thead>
+      <tr><th>Allocation</th><th>%</th><th>Monthly Amount</th><th>ETF</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>🌍 MSCI World</td><td>40%</td><td>400 PLN</td><td>SXRT.DE</td></tr>
+      <tr><td>🤖 AI & Big Data</td><td>20%</td><td>200 PLN</td><td>XAIX.DE</td></tr>
+      <tr><td>🌏 Emerging Markets</td><td>15%</td><td>150 PLN</td><td>EMIM.DE</td></tr>
+      <tr><td>🇪🇺 Europe</td><td>10%</td><td>100 PLN</td><td>SX5S.DE</td></tr>
+      <tr><td>🥇 Gold</td><td>10%</td><td>100 PLN</td><td>4GLD.DE</td></tr>
+      <tr><td>🛡️ Bonds</td><td>5%</td><td>50 PLN</td><td>IBGS.DE</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Why This Mix?</h4>
+  <ul>
+    <li><strong>40% World:</strong> Your backbone — broad, stable, global exposure</li>
+    <li><strong>20% AI:</strong> Your conviction bet — you believe in this theme, lean into it</li>
+    <li><strong>15% EM:</strong> Fill the gap — you're underexposed here now</li>
+    <li><strong>10% Europe:</strong> Cheaper valuations, solid companies</li>
+    <li><strong>10% Gold:</strong> Insurance policy — helps when stocks crash</li>
+    <li><strong>5% Bonds:</strong> Stability cushion — not exciting, but reduces anxiety</li>
+  </ul>
+
+  <div class="success-box">
+    <strong>✅ Pro Tip:</strong> Set up automatic monthly transfers from your bank account to XTB. Then execute the above split manually each month. XTB has commission-free ETF trading on XETRA — perfect for DCA.
+  </div>
+</div>
+
+<div class="card">
+  <h3>🔄 Rebalancing Rules</h3>
+  
+  <p><strong>What is rebalancing?</strong> Selling overperformers and buying underperformers to maintain your target allocation. Sounds counterintuitive, but it's "sell high, buy low" discipline.</p>
+
+  <h4>When to Rebalance</h4>
+  <table>
+    <thead>
+      <tr><th>Trigger</th><th>Action</th><th>Frequency</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Calendar-based</strong></td>
+        <td>Review allocation every 6-12 months</td>
+        <td>Twice a year (June, December)</td>
+      </tr>
+      <tr>
+        <td><strong>Threshold-based</strong></td>
+        <td>If any asset drifts >5% from target, rebalance</td>
+        <td>As needed</td>
+      </tr>
+      <tr>
+        <td><strong>Example:</strong></td>
+        <td>Target 40% World, now 50% → Sell 10% World, buy underweight assets</td>
+        <td>—</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>How to Rebalance (Tax-Smart)</h4>
+  <ol>
+    <li><strong>Prioritize new money:</strong> If you're adding 1,000 PLN/month, direct it toward underweight assets first</li>
+    <li><strong>Rebalance in IKE first:</strong> No tax on selling winners there</li>
+    <li><strong>Avoid selling in regular account:</strong> Triggers 19% Belka tax. Only rebalance there if drift is extreme (>10%)</li>
+    <li><strong>Use dividends/cash:</strong> If any ETFs pay dividends, reinvest into underweight positions</li>
+  </ol>
+
+  <div class="note">
+    <strong>Example Scenario:</strong> XAIX (AI) rallies +50%, now 30% of portfolio instead of 20%. You could sell some in IKE (tax-free), or just stop buying it and let other assets catch up over time.
+  </div>
+</div>
+
+<div class="card">
+  <h3>🎲 Experimental/High-Risk Allocation (5-10% Max)</h3>
+  
+  <p>You mentioned wanting "some risk for high gain." Here's how to do it without blowing up your portfolio:</p>
+
+  <h4>The 5% Rule</h4>
+  <p>Allocate up to 5-10% of portfolio to "moonshot" bets — things that could 3-5x or go to zero. Mentally write this money off. If it works, great. If not, it won't wreck you.</p>
+
+  <h4>High-Risk Ideas (NOT RECOMMENDATIONS — Do Your Own Research)</h4>
+  <table>
+    <thead>
+      <tr><th>Idea</th><th>Why Risky</th><th>Potential Upside</th><th>How to Access</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Small-Cap Growth ETF</strong></td>
+        <td>High volatility, many companies fail</td>
+        <td>Outperforms large-caps in bull markets</td>
+        <td>ZPRR.DE (SPDR Russell 2000)</td>
+      </tr>
+      <tr>
+        <td><strong>Thematic ETFs</strong></td>
+        <td>Narrow focus = boom or bust</td>
+        <td>If theme takes off, 2-3x gains possible</td>
+        <td>Robotics, Clean Energy, Biotech ETFs</td>
+      </tr>
+      <tr>
+        <td><strong>Individual Stocks</strong></td>
+        <td>Company-specific risk, can go bankrupt</td>
+        <td>10x returns if you pick winners</td>
+        <td>Research high-conviction ideas (e.g., NVIDIA 5 years ago)</td>
+      </tr>
+      <tr>
+        <td><strong>Leveraged ETFs (2x/3x)</strong></td>
+        <td>Decay over time, can lose 50%+ in days</td>
+        <td>Amplified gains in bull runs</td>
+        <td><span class="red">AVOID unless you know what you're doing</span></td>
+      </tr>
+      <tr>
+        <td><strong>Crypto (Bitcoin/ETH)</strong></td>
+        <td>Extreme volatility, regulatory risk</td>
+        <td>10x+ in bull cycles, -80% in bear markets</td>
+        <td>Outside scope of this analysis</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="warning-box">
+    <strong>⚠️ My Honest Take:</strong> If you want high-risk exposure, your 62% tech allocation is already aggressive. Adding a small-cap or thematic ETF is fine, but don't over-do it. The 20,000 PLN should go toward <em>fixing</em> your concentration risk, not adding more.
+  </div>
+</div>
+
+<div class="card">
+  <h3>👀 What to Watch For / When to Change Strategy</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Indicator</th><th>What It Signals</th><th>Your Response</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Tech crashes -30%+</strong></td>
+        <td>AI bubble burst or recession</td>
+        <td>Don't panic-sell. Rebalance by buying more broad index (SXRT). This is when you <em>add</em> to stocks, not sell.</td>
+      </tr>
+      <tr>
+        <td><strong>Valuations normalize (S&P P/E → 18)</strong></td>
+        <td>Market correction underway</td>
+        <td>Trim overweight tech, add to undervalued regions (Europe, EM)</td>
+      </tr>
+      <tr>
+        <td><strong>Gold spikes another +30%</strong></td>
+        <td>Flight to safety, fear rising</td>
+        <td>Consider taking profits if gold >10% of portfolio</td>
+      </tr>
+      <tr>
+        <td><strong>Recession confirmed (2 quarters negative GDP)</strong></td>
+        <td>Economic contraction</td>
+        <td>Bonds and gold hold up; stocks fall. Stay the course. Recessions end.</td>
+      </tr>
+      <tr>
+        <td><strong>Your income drops significantly</strong></td>
+        <td>Personal financial stress</td>
+        <td>Build cash buffer (6 months expenses). Pause investing temporarily. Don't sell portfolio unless emergency.</td>
+      </tr>
+      <tr>
+        <td><strong>You approach 40 years old</strong></td>
+        <td>Time horizon shortening</td>
+        <td>Gradually increase bonds to 20-30%. Reduce high-risk bets.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <strong>💡 Golden Rule:</strong> Time in the market > timing the market. Your strategy should change slowly over years, not frantically based on headlines. The best investors are boring and consistent.
+  </div>
+</div>
+
+<!-- ==================== E. RISK SCENARIOS ==================== -->
+
+<h2 id="risk">E. Risk Scenarios & Stress Testing</h2>
+
+<div class="card">
+  <h3>📉 Scenario 1: Tech Crash (-30%)</h3>
+  
+  <p><strong>Trigger:</strong> AI hype fades, earnings disappoint, regulation tightens → NASDAQ drops -30%</p>
+
+  <h4>Impact on Current Portfolio (~32k PLN)</h4>
+  <table>
+    <thead>
+      <tr><th>Asset</th><th>Current Value</th><th>Exposure to Tech</th><th>Loss</th><th>New Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>XAIX (AI)</td><td>11,838</td><td>~90%</td><td class="red">-3,195</td><td>8,643</td></tr>
+      <tr><td>CNDX/QDVE (NASDAQ)</td><td>8,382</td><td>~100%</td><td class="red">-2,515</td><td>5,867</td></tr>
+      <tr><td>XLKS (Info Tech)</td><td>3,427</td><td>~100%</td><td class="red">-1,028</td><td>2,399</td></tr>
+      <tr><td>SXRT/IWDA (World)</td><td>4,925</td><td>~28%</td><td class="red">-413</td><td>4,512</td></tr>
+      <tr><td>SXR8/CSPX (S&P)</td><td>3,333</td><td>~28%</td><td class="red">-280</td><td>3,053</td></tr>
+      <tr><td>Cash</td><td>51</td><td>0%</td><td>0</td><td>51</td></tr>
+      <tr><td colspan="3"><strong>Total Portfolio Loss</strong></td><td class="red"><strong>-7,431 (-23%)</strong></td><td><strong>24,525</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Impact on Recommended Portfolio (52k PLN after adding 20k)</h4>
+  <table>
+    <thead>
+      <tr><th>Asset</th><th>Value</th><th>Tech %</th><th>Loss</th><th>New Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Tech (AI, NASDAQ, S&P Tech)</td><td>~25,000</td><td>~75%</td><td class="red">-5,625</td><td>19,375</td></tr>
+      <tr><td>Broad Equity (World, EM, Europe)</td><td>~15,000</td><td>~25%</td><td class="red">-1,125</td><td>13,875</td></tr>
+      <tr><td>Gold</td><td>~2,000</td><td>0%</td><td class="green">+200</td><td>2,200</td></tr>
+      <tr><td>Bonds</td><td>~3,000</td><td>0%</td><td>0</td><td>3,000</td></tr>
+      <tr><td colspan="3"><strong>Total Portfolio Loss</strong></td><td class="orange"><strong>-6,550 (-12.6%)</strong></td><td><strong>45,450</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <strong>💡 Key Takeaway:</strong> Current portfolio drops -23% in tech crash. Recommended portfolio drops -12.6%. Diversification cuts your loss in HALF. Gold gains +10% as safe-haven. Bonds are stable. This is why you diversify.
+  </div>
+</div>
+
+<div class="card">
+  <h3>📉 Scenario 2: Broad Market Recession (-20%)</h3>
+  
+  <p><strong>Trigger:</strong> Global recession hits → all stocks fall -20%, bonds flat, gold +10%</p>
+
+  <h4>Current Portfolio (~32k PLN)</h4>
+  <table>
+    <thead>
+      <tr><th>Asset</th><th>Current Value</th><th>Impact</th><th>New Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>All Stocks</td><td>32,149</td><td class="red">-6,430 (-20%)</td><td>25,719</td></tr>
+      <tr><td>Cash</td><td>51</td><td>0</td><td>51</td></tr>
+      <tr><td colspan="2"><strong>Total Loss</strong></td><td class="red"><strong>-6,430 (-20%)</strong></td><td><strong>25,770</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Recommended Portfolio (52k PLN)</h4>
+  <table>
+    <thead>
+      <tr><th>Asset</th><th>Value</th><th>Impact</th><th>New Value</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Stocks (all types)</td><td>47,000</td><td class="red">-9,400 (-20%)</td><td>37,600</td></tr>
+      <tr><td>Gold</td><td>2,000</td><td class="green">+200 (+10%)</td><td>2,200</td></tr>
+      <tr><td>Bonds</td><td>3,000</td><td>0 (flat)</td><td>3,000</td></tr>
+      <tr><td colspan="2"><strong>Total Loss</strong></td><td class="orange"><strong>-9,200 (-17.7%)</strong></td><td><strong>42,800</strong></td></tr>
+    </tbody>
+  </table>
+
+  <div class="insight">
+    <strong>💡 Result:</strong> Diversified portfolio cushions the blow. You lose -17.7% instead of -20%. Gold and bonds act as shock absorbers. Not a huge difference, but in a real crisis, that 2.3% can be the difference between selling in panic or holding through.
+  </div>
+</div>
+
+<div class="card">
+  <h3>💱 Scenario 3: EUR/PLN Strengthens 10%</h3>
+  
+  <p><strong>Trigger:</strong> PLN rallies vs EUR (e.g., EUR/PLN drops from 4.25 → 3.83)</p>
+
+  <h4>Impact on Your EUR Holdings (~18,350 PLN)</h4>
+  <ul>
+    <li>Your EUR assets (SXRT, QDVE, SXR8, etc.) are worth <strong>10% less in PLN terms</strong></li>
+    <li><strong>Loss: ~1,835 PLN</strong> purely from currency movement</li>
+    <li>The stocks themselves haven't changed — you just lost purchasing power in PLN</li>
+  </ul>
+
+  <h4>Impact on Your USD Holdings (~13,800 PLN)</h4>
+  <ul>
+    <li>If USD/PLN also drops 10% → another <strong>~1,380 PLN loss</strong></li>
+    <li><strong>Total currency loss: ~3,215 PLN (-10% of portfolio)</strong></li>
+  </ul>
+
+  <div class="warning-box">
+    <strong>⚠️ Reality Check:</strong> This is a real risk. But historically:
+    <ul style="margin-top:0.5rem">
+      <li>PLN strengthening 10% in one year is rare (last happened 2008-2009)</li>
+      <li>Over 20+ years, currency swings average out</li>
+      <li>If PLN strengthens, your imported goods get cheaper (iPhones, cars, vacations abroad)</li>
+      <li>Long-term investors should NOT obsess over currency — it's noise</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3>🤖 Scenario 4: AI Is a Bubble (XAIX -50%)</h3>
+  
+  <p><strong>Trigger:</strong> AI hype was overblown → AI-focused stocks crash -50% while broad market is flat</p>
+
+  <h4>Current Portfolio Impact</h4>
+  <ul>
+    <li>XAIX (11,838 PLN) → <strong>5,919 PLN (-5,919 loss)</strong></li>
+    <li>Rest of portfolio: flat</li>
+    <li><strong>Total portfolio: 32,200 → 26,281 (-18.4%)</strong></li>
+  </ul>
+
+  <h4>Recommended Portfolio Impact</h4>
+  <ul>
+    <li>XAIX (~13,838 PLN after more purchases) → <strong>6,919 PLN (-6,919 loss)</strong></li>
+    <li>Rest of portfolio: flat</li>
+    <li><strong>Total portfolio: 52,000 → 45,081 (-13.3%)</strong></li>
+  </ul>
+
+  <div class="insight">
+    <strong>💡 Lesson:</strong> Your current 37% XAIX allocation is your biggest single-stock risk. Even the recommended portfolio takes a -13% hit if AI implodes. If you're nervous about AI, reduce XAIX to 15-20% max.
+  </div>
+</div>
+
+<div class="card">
+  <h3>📊 Summary: Stress Test Comparison</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Scenario</th><th>Current Portfolio Loss</th><th>Recommended Portfolio Loss</th><th>Improvement</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Tech Crash (-30%)</td><td class="red">-23.0%</td><td class="orange">-12.6%</td><td class="green">+10.4% better</td></tr>
+      <tr><td>Broad Recession (-20%)</td><td class="red">-20.0%</td><td class="orange">-17.7%</td><td class="green">+2.3% better</td></tr>
+      <tr><td>EUR/PLN +10%</td><td class="orange">-10.0%</td><td class="orange">-9.5%</td><td class="green">+0.5% better</td></tr>
+      <tr><td>AI Bubble (-50%)</td><td class="red">-18.4%</td><td class="orange">-13.3%</td><td class="green">+5.1% better</td></tr>
+    </tbody>
+  </table>
+
+  <div class="success-box">
+    <strong>✅ Verdict:</strong> Diversification works. In every scenario, the recommended portfolio performs better. The difference ranges from modest (2.3%) to significant (10.4%). Over a 20-30 year investing journey, you WILL experience 2-3 of these scenarios. Being prepared matters.
+  </div>
+</div>
+
+<!-- ==================== F. COMMON MISTAKES ==================== -->
+
+<h2 id="mistakes">F. Common Mistakes to Avoid</h2>
+
+<div class="two-col">
+  <div class="card card-warning">
+    <h3 class="red">❌ DON'T</h3>
+    <ul style="line-height:1.8">
+      <li><strong>Don't sell winners to "lock in profits"</strong> — You'll trigger 19% tax and miss future gains. Let winners run.</li>
+      <li><strong>Don't panic-sell in a crash</strong> — Markets recover. Selling at -30% locks in losses. History shows recoveries always happen.</li>
+      <li><strong>Don't keep buying duplicate ETFs</strong> — Stop buying CNDX if you own QDVE. It's the same thing in different currency.</li>
+      <li><strong>Don't check portfolio daily</strong> — Volatility will drive you insane. Check monthly max. Better yet, quarterly.</li>
+      <li><strong>Don't time the market</strong> — Waiting for "the dip" means you miss rallies. Time IN the market beats timing the market.</li>
+      <li><strong>Don't ignore IKE</strong> — 19% tax savings is HUGE. Max out IKE every year before regular account.</li>
+      <li><strong>Don't invest money you need in 1-2 years</strong> — Stocks are volatile short-term. Only invest money you won't need for 5+ years.</li>
+      <li><strong>Don't follow hot tips</strong> — "My friend says XYZ will moon" is not research. Stick to your strategy.</li>
+      <li><strong>Don't compare yourself to others</strong> — Someone made 50% on crypto? Good for them. You're building long-term wealth, not gambling.</li>
+    </ul>
+  </div>
+
+  <div class="card card-success">
+    <h3 class="green">✅ DO</h3>
+    <ul style="line-height:1.8">
+      <li><strong>Do automate investing</strong> — Set up monthly transfers. Remove emotion from the equation.</li>
+      <li><strong>Do diversify</strong> — Geography, sector, asset class. Don't put all eggs in one basket.</li>
+      <li><strong>Do rebalance periodically</strong> — Once or twice a year, realign to target allocation.</li>
+      <li><strong>Do increase contributions over time</strong> — As your income grows, invest more. 10% → 15% → 20% of income.</li>
+      <li><strong>Do think in decades</strong> — This is a 20-30 year game. Short-term noise doesn't matter.</li>
+      <li><strong>Do keep learning</strong> — Read books (e.g., "A Random Walk Down Wall Street"), follow quality sources (Morningstar, Bogleheads).</li>
+      <li><strong>Do have an emergency fund</strong> — 6 months expenses in cash. This lets you ride out job loss without touching portfolio.</li>
+      <li><strong>Do celebrate milestones</strong> — Hit 50k? 100k? 500k? Acknowledge progress. It's a long journey.</li>
+      <li><strong>Do update your plan</strong> — Life changes (marriage, kids, business growth). Revisit strategy every 2-3 years.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="card">
+  <h3>⚠️ Specific to Your Situation</h3>
+  
+  <table>
+    <thead>
+      <tr><th>Mistake</th><th>Why It's Bad for You</th><th>Fix</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Over-concentrating in tech</strong></td>
+        <td>You already have 62% tech. One sector crash = portfolio crash.</td>
+        <td>Use new money to diversify into World, EM, Europe, bonds, gold.</td>
+      </tr>
+      <tr>
+        <td><strong>Ignoring emerging markets</strong></td>
+        <td>EM is 25% of global market cap, grew +30% in 2025, and you own 0%.</td>
+        <td>Allocate 10-15% to EMIM.DE (iShares MSCI EM IMI).</td>
+      </tr>
+      <tr>
+        <td><strong>No defensive assets</strong></td>
+        <td>100% stocks = 100% volatility. Crashes will test your nerves.</td>
+        <td>Add 5-10% bonds, 5% gold. Sleep better at night.</td>
+      </tr>
+      <tr>
+        <td><strong>Buying USD ETFs as a PLN earner</strong></td>
+        <td>EUR is closer to PLN → lower currency volatility.</td>
+        <td>Prefer EUR versions (QDVE over CNDX, SXRT over IWDA).</td>
+      </tr>
+      <tr>
+        <td><strong>Not using IKE to full potential</strong></td>
+        <td>You pay 19% tax on gains in regular account. IKE is 0%.</td>
+        <td>Check 2026 limit (~27k PLN), max it out before regular account.</td>
+      </tr>
+      <tr>
+        <td><strong>Selling small losers (XLKS -45 PLN)</strong></td>
+        <td>Triggers tax event, locks in loss, incurs spread costs.</td>
+        <td>Hold it. -45 PLN is noise. It will recover over time.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== G. SOURCES & REFERENCES ==================== -->
+
+<h2 id="sources">G. Sources & References</h2>
+
+<div class="card">
+  <h3>📚 Research Sources Used</h3>
+  
+  <h4>Core Investment Education</h4>
+  <ul>
+    <li><strong>Investopedia:</strong> Portfolio Management, Risk-Return Tradeoff, Rebalancing Strategies</li>
+    <li><strong>Bogleheads Wiki:</strong> Asset Allocation Principles (passive investing philosophy)</li>
+    <li><strong>Morningstar:</strong> Market analysis, ETF data, performance metrics</li>
+  </ul>
+
+  <h4>ETF Data Sources</h4>
+  <ul>
+    <li><strong>justETF.com:</strong> European ETF database, TER data, fund sizes, performance</li>
+    <li><strong>iShares/BlackRock:</strong> ETF fact sheets for MSCI World (IE00B4L5Y983), EM IMI (IE00BKM4GZ66)</li>
+    <li><strong>Xtrackers/DWS:</strong> AI & Big Data ETF details</li>
+  </ul>
+
+  <h4>Market Data & Outlook</h4>
+  <ul>
+    <li><strong>Morningstar Market Reports:</strong> 2025 performance, 2026 outlook, valuations</li>
+    <li><strong>Financial Times / Bloomberg (general knowledge):</strong> Interest rate trends, economic data</li>
+  </ul>
+
+  <h4>Tax & Regulatory</h4>
+  <ul>
+    <li><strong>Polish Tax Law:</strong> 19% Belka tax on capital gains (known as "podatek Belki")</li>
+    <li><strong>IKE Regulations:</strong> 2026 contribution limit based on 1.2x average salary</li>
+  </ul>
+
+  <h4>Key References from Research</h4>
+  <table>
+    <thead>
+      <tr><th>Topic</th><th>Key Fact</th><th>Source</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Diversification reduces risk</td>
+        <td>"Diversification tries to reduce risk by allocating investments among various financial instruments"</td>
+        <td>Investopedia - Portfolio Management</td>
+      </tr>
+      <tr>
+        <td>Risk-Return Tradeoff</td>
+        <td>"Invested money can render higher profits only if the investor accepts higher possibility of losses"</td>
+        <td>Investopedia - Risk-Return Tradeoff</td>
+      </tr>
+      <tr>
+        <td>Rebalancing frequency</td>
+        <td>"Recommended that investors examine allocations at least once every year"</td>
+        <td>Investopedia - Rebalancing</td>
+      </tr>
+      <tr>
+        <td>MSCI World composition</td>
+        <td>1,318 holdings across 23 developed countries, TER 0.20%, US 68.9%, Tech 28.5%</td>
+        <td>justETF - IE00B4L5Y983</td>
+      </tr>
+      <tr>
+        <td>2025 performance</td>
+        <td>MSCI World +26.2%, Europe +32%, EM +30%, Gold +64%</td>
+        <td>Morningstar Markets (Jan 2026)</td>
+      </tr>
+      <tr>
+        <td>P/E valuations</td>
+        <td>S&P 500 at ~24-26 vs historical avg ~16-18 (expensive)</td>
+        <td>General market knowledge (Morningstar, Bloomberg)</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Limitations & Unknowns</h4>
+  <div class="warning-box">
+    <strong>⚠️ What I COULDN'T verify:</strong>
+    <ul style="margin-top:0.5rem">
+      <li>Real-time P/E ratios for all indices (used general market estimates)</li>
+      <li>Exact 2026 IKE limit (estimated ~27,418 PLN based on 1.2x average salary formula)</li>
+      <li>Precise current gold prices (used "record highs" from Morningstar articles)</li>
+      <li>XTB-specific fee structures (assumed commission-free ETF trading on XETRA as advertised)</li>
+      <li>Future currency movements (EUR/PLN, USD/PLN are inherently unpredictable)</li>
+    </ul>
+    <p style="margin-top:0.75rem"><strong>Action:</strong> Always verify critical numbers (IKE limits, tax rates, ETF fees) with official sources before acting.</p>
+  </div>
+
+  <h4>Recommended Reading</h4>
+  <ul>
+    <li><strong>"A Random Walk Down Wall Street"</strong> by Burton Malkiel — Classic on passive investing</li>
+    <li><strong>"The Little Book of Common Sense Investing"</strong> by John Bogle — Index fund bible</li>
+    <li><strong>"The Intelligent Investor"</strong> by Benjamin Graham — Value investing principles</li>
+    <li><strong>Bogleheads.org Forum</strong> — Community of passive investors (very helpful)</li>
+    <li><strong>justETF Academy</strong> — Free ETF education in English</li>
+  </ul>
+</div>
+
+<hr class="divider">
+
+<p style="color:var(--muted);text-align:center;font-size:0.9rem;padding:2rem 0;line-height:1.8">
+  <strong>This report was generated by Clawd 🦞 on January 31, 2026</strong><br>
+  Based on XTB account data, Investopedia research, Morningstar market analysis, and justETF ETF database.<br>
+  <br>
+  <em>Remember: I'm an AI assistant, not a financial advisor. This is educational analysis.<br>
+  Markets are unpredictable. Past performance ≠ future results. Do your own due diligence.<br>
+  When in doubt, consult a licensed financial professional.</em>
+</p>
+
+</div>
+
+<script>
+const HASH = '8ecf919a1d9eb2a1f2c5a111b2610bc331d71bd458ccaca012cc974f1077ec98';
+
+async function sha256(msg) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function unlock() {
+  const pw = document.getElementById('pw').value;
+  const hash = await sha256(pw);
+  if (hash === HASH) {
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('content').style.display = 'block';
+    window.scrollTo(0, 0);
+  } else {
+    document.getElementById('err').style.display = 'block';
+    document.getElementById('pw').value = '';
+    document.getElementById('pw').focus();
+  }
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+</script>
+
+</body>
+</html>
