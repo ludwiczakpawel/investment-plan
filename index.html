@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Investment Plan</title>
+<title>Investment Analysis — Paweł</title>
 <style>
   :root {
     --bg: #0d1117;
@@ -67,44 +67,63 @@
   }
   .lock-box button:hover { opacity: 0.85; }
   .error { color: #f85149; font-size: 0.85rem; margin-top: 0.75rem; display: none; }
-  #content { display: none; }
-  .nav-bar {
+  
+  #nav {
+    display: none;
     position: sticky;
     top: 0;
-    z-index: 100;
-    background: var(--card);
+    z-index: 1000;
+    background: var(--bg);
     border-bottom: 1px solid var(--border);
-    padding: 0.75rem 2rem;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }
+  .nav-container {
+    max-width: 1100px;
+    margin: 0 auto;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+  }
+  .nav-tabs {
+    display: flex;
     gap: 0.5rem;
   }
-  .nav-bar .logo { font-size: 1.1rem; font-weight: 700; margin-right: 1.5rem; }
   .nav-tab {
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
+    padding: 0.6rem 1.25rem;
+    border-radius: 8px;
+    background: var(--card);
     border: 1px solid var(--border);
-    background: transparent;
     color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
     text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.2s;
+    cursor: pointer;
   }
-  .nav-tab:hover { border-color: var(--accent); color: var(--text); }
-  .nav-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .nav-tag {
-    font-size: 0.65rem;
-    padding: 0.1rem 0.35rem;
-    border-radius: 3px;
-    background: rgba(63,185,80,0.15);
-    color: #3fb950;
-    margin-left: 0.3rem;
-    font-weight: 700;
-    vertical-align: middle;
+  .nav-tab:hover {
+    background: rgba(88, 166, 255, 0.1);
+    border-color: var(--accent);
+    color: var(--text);
   }
-  #page-content { padding: 0; }
+  .nav-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .nav-logo {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  
+  #content { display: none; }
+  
+  @media (max-width: 768px) {
+    #nav { padding: 0.75rem 1rem; }
+    .nav-container { flex-direction: column; gap: 0.75rem; }
+    .nav-tabs { width: 100%; justify-content: center; }
+    .nav-tab { flex: 1; text-align: center; padding: 0.5rem 0.75rem; font-size: 0.8rem; }
+  }
 </style>
 </head>
 <body>
@@ -112,58 +131,41 @@
 <div id="gate">
   <div class="lock-box">
     <div class="emoji">🔒</div>
-    <h1>Investment Plan</h1>
-    <p>Enter password to view</p>
+    <h1>Investment Analysis</h1>
+    <p>Enter password to view your portfolio analysis</p>
     <input type="password" id="pw" placeholder="••••••" autofocus>
     <button onclick="unlock()">Unlock</button>
     <div class="error" id="err">Wrong password. Try again.</div>
   </div>
 </div>
 
-<div id="content">
-  <div class="nav-bar">
-    <span class="logo">📊 Investment Plan</span>
-    <a class="nav-tab" data-page="v1" onclick="switchPage('v1')">v1: Quick Plan</a>
-    <a class="nav-tab active" data-page="v2" onclick="switchPage('v2')">v2: Deep Analysis <span class="nav-tag">NEW</span></a>
+<div id="nav">
+  <div class="nav-container">
+    <div class="nav-tabs">
+      <a class="nav-tab" onclick="loadVersion('v2')" id="tab-v2">
+        🧠 Deep Analysis
+      </a>
+      <a class="nav-tab" onclick="loadVersion('v1')" id="tab-v1">
+        🎯 Quick Plan
+      </a>
+    </div>
+    <div class="nav-logo">
+      Paweł's Portfolio · Jan 2026
+    </div>
   </div>
-  <div id="page-content"></div>
 </div>
 
+<div id="content"></div>
+
 <script>
+// Simple hash-based gate. Not military-grade, but keeps random visitors out.
 const HASH = '8ecf919a1d9eb2a1f2c5a111b2610bc331d71bd458ccaca012cc974f1077ec98';
-const pages = { v1: 'plan-content.html', v2: 'deep-analysis.html' };
-const cache = {};
-let currentPage = 'v2';
-let stylesLoaded = {};
+
+let currentVersion = 'v2'; // Default to deep analysis
 
 async function sha256(msg) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function loadPage(name) {
-  if (cache[name]) return cache[name];
-  const resp = await fetch(pages[name]);
-  const html = await resp.text();
-  cache[name] = html;
-  return html;
-}
-
-async function switchPage(name) {
-  currentPage = name;
-  document.querySelectorAll('.nav-tab').forEach(t => {
-    t.classList.toggle('active', t.dataset.page === name);
-  });
-  const html = await loadPage(name);
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(html, 'text/html');
-  if (!stylesLoaded[name]) {
-    const style = doc.querySelector('style');
-    if (style) document.head.appendChild(style.cloneNode(true));
-    stylesLoaded[name] = true;
-  }
-  document.getElementById('page-content').innerHTML = doc.body.innerHTML;
-  window.scrollTo(0, 0);
 }
 
 async function unlock() {
@@ -171,8 +173,9 @@ async function unlock() {
   const hash = await sha256(pw);
   if (hash === HASH) {
     document.getElementById('gate').style.display = 'none';
-    document.getElementById('content').style.display = 'block';
-    switchPage(currentPage);
+    document.getElementById('nav').style.display = 'block';
+    // Load default version (v2 - deep analysis)
+    await loadVersion('v2');
   } else {
     document.getElementById('err').style.display = 'block';
     document.getElementById('pw').value = '';
@@ -180,7 +183,52 @@ async function unlock() {
   }
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('gate').style.display !== 'none') unlock(); });
+async function loadVersion(version) {
+  currentVersion = version;
+  
+  // Update active tab
+  document.getElementById('tab-v1').classList.remove('active');
+  document.getElementById('tab-v2').classList.remove('active');
+  document.getElementById(`tab-${version}`).classList.add('active');
+  
+  // Determine which file to load
+  const file = version === 'v1' ? 'plan-content.html' : 'deep-analysis.html';
+  
+  // Fetch and display content
+  const resp = await fetch(file);
+  const html = await resp.text();
+  
+  // Extract body content and styles
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  
+  // Remove any existing imported styles
+  const existingStyles = document.querySelectorAll('style[data-imported]');
+  existingStyles.forEach(s => s.remove());
+  
+  // Add new styles
+  const style = doc.querySelector('style');
+  if (style) {
+    const importedStyle = style.cloneNode(true);
+    importedStyle.setAttribute('data-imported', 'true');
+    document.head.appendChild(importedStyle);
+  }
+  
+  // Update content
+  const body = doc.body.innerHTML;
+  const content = document.getElementById('content');
+  content.innerHTML = body;
+  content.style.display = 'block';
+  
+  // Scroll to top
+  window.scrollTo(0, 0);
+}
+
+document.addEventListener('keydown', e => { 
+  if (e.key === 'Enter' && document.getElementById('gate').style.display !== 'none') {
+    unlock();
+  }
+});
 </script>
 </body>
 </html>
