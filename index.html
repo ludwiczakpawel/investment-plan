@@ -68,6 +68,43 @@
   .lock-box button:hover { opacity: 0.85; }
   .error { color: #f85149; font-size: 0.85rem; margin-top: 0.75rem; display: none; }
   #content { display: none; }
+  .nav-bar {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .nav-bar .logo { font-size: 1.1rem; font-weight: 700; margin-right: 1.5rem; }
+  .nav-tab {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .nav-tab:hover { border-color: var(--accent); color: var(--text); }
+  .nav-tab.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .nav-tag {
+    font-size: 0.65rem;
+    padding: 0.1rem 0.35rem;
+    border-radius: 3px;
+    background: rgba(63,185,80,0.15);
+    color: #3fb950;
+    margin-left: 0.3rem;
+    font-weight: 700;
+    vertical-align: middle;
+  }
+  #page-content { padding: 0; }
 </style>
 </head>
 <body>
@@ -83,15 +120,50 @@
   </div>
 </div>
 
-<div id="content"></div>
+<div id="content">
+  <div class="nav-bar">
+    <span class="logo">📊 Investment Plan</span>
+    <a class="nav-tab" data-page="v1" onclick="switchPage('v1')">v1: Quick Plan</a>
+    <a class="nav-tab active" data-page="v2" onclick="switchPage('v2')">v2: Deep Analysis <span class="nav-tag">NEW</span></a>
+  </div>
+  <div id="page-content"></div>
+</div>
 
 <script>
-// Simple hash-based gate. Not military-grade, but keeps random visitors out.
 const HASH = '8ecf919a1d9eb2a1f2c5a111b2610bc331d71bd458ccaca012cc974f1077ec98';
+const pages = { v1: 'plan-content.html', v2: 'deep-analysis.html' };
+const cache = {};
+let currentPage = 'v2';
+let stylesLoaded = {};
 
 async function sha256(msg) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(msg));
   return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function loadPage(name) {
+  if (cache[name]) return cache[name];
+  const resp = await fetch(pages[name]);
+  const html = await resp.text();
+  cache[name] = html;
+  return html;
+}
+
+async function switchPage(name) {
+  currentPage = name;
+  document.querySelectorAll('.nav-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.page === name);
+  });
+  const html = await loadPage(name);
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  if (!stylesLoaded[name]) {
+    const style = doc.querySelector('style');
+    if (style) document.head.appendChild(style.cloneNode(true));
+    stylesLoaded[name] = true;
+  }
+  document.getElementById('page-content').innerHTML = doc.body.innerHTML;
+  window.scrollTo(0, 0);
 }
 
 async function unlock() {
@@ -99,17 +171,8 @@ async function unlock() {
   const hash = await sha256(pw);
   if (hash === HASH) {
     document.getElementById('gate').style.display = 'none';
-    const resp = await fetch('plan-content.html');
-    const html = await resp.text();
-    // Extract body content and styles
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
-    const style = doc.querySelector('style');
-    const body = doc.body.innerHTML;
-    if (style) document.head.appendChild(style.cloneNode(true));
-    const content = document.getElementById('content');
-    content.innerHTML = body;
-    content.style.display = 'block';
+    document.getElementById('content').style.display = 'block';
+    switchPage(currentPage);
   } else {
     document.getElementById('err').style.display = 'block';
     document.getElementById('pw').value = '';
@@ -117,7 +180,7 @@ async function unlock() {
   }
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Enter') unlock(); });
+document.addEventListener('keydown', e => { if (e.key === 'Enter' && document.getElementById('gate').style.display !== 'none') unlock(); });
 </script>
 </body>
 </html>
